@@ -1,10 +1,10 @@
 variable "do_token" {}
 variable "domain_name" {
-	default = "furikuri.net"
+  default = "furikuri.net"
 }
 variable "ssh_fingerprint" {}
 variable "names" {
-	default = "theo,furi"
+  default = "name1,name2"
 }
 
 provider "digitalocean" {
@@ -23,13 +23,13 @@ resource "digitalocean_droplet" "coreos" {
 }
 
 resource "digitalocean_record" "coreos" {
-    count = "${length(split(",", var.names))}"
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "${format("coreos-%s", element(split(",", var.names), count.index))}"
-    value = "${element(digitalocean_droplet.coreos.*.ipv4_address, count.index)}"
+  count = "${length(split(",", var.names))}"
+  domain = "${var.domain_name}"
+  type = "A"
+  name = "${format("coreos-%s", element(split(",", var.names), count.index))}"
+  value = "${element(digitalocean_droplet.coreos.*.ipv4_address, count.index)}"
 }
 
 output "fqdn" {
-	value = "${join(",\n", digitalocean_record.coreos.*.fqdn)}"
+  value = "${join(",\n", digitalocean_record.coreos.*.fqdn)}"
 }
